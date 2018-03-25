@@ -7,7 +7,7 @@ import pickle
 
 DATA_PATH_BASE = "./data/fruits-360"
 DATA_PATH_TRAIN = DATA_PATH_BASE + "/Training"
-DATA_PATH_VAL = DATA_PATH_BASE + "/Training"
+DATA_PATH_VAL = DATA_PATH_BASE + "/Validation"
 
 
 def load_image(image_path):
@@ -17,7 +17,7 @@ def load_image(image_path):
         return data
 
 
-def load_data(path, lables):
+def load_data_path(path, lables):
     inv_lables = {}
     class_idx = 0
     X = []
@@ -46,21 +46,26 @@ def load_data(path, lables):
     return X, Y, inv_lables
 
 
-TRAIN_DATA_FIlE = './data/fruits_train.pickle'
+def load_data_cached(src_path, lables):
+    pickle_file = src_path + ".pickle"
+    if not os.path.isfile(pickle_file):
+        X, Y, inv_lables = load_data_path(src_path, lables)
+        data = [X, Y, inv_lables]
+        with open(pickle_file, 'wb') as f:
+            pickle.dump(data, f)
+    else:
+        print("load cached data from:", pickle_file)
+        with open(pickle_file, 'rb') as f:
+            data = pickle.load(f)
+            X, Y, inv_lables = data
+    return X, Y, inv_lables
 
-if not os.path.isfile(TRAIN_DATA_FIlE):
-    lables_index = {}
-    X_train, Y_train, inv_lables_train = load_data(DATA_PATH_TRAIN, lables_index)
-    data = [X_train, Y_train, inv_lables_train]
-    with open(TRAIN_DATA_FIlE, 'wb') as f:
-        pickle.dump(data, f)
-else:
-    with open(TRAIN_DATA_FIlE, 'rb') as f:
-        data = pickle.load(f)
-        X_train, Y_train, inv_lables_train = data
 
+if __name__ == "__main__":
+    lables = {}
+    X_train, Y_train, inv_lables_train = load_data_cached(DATA_PATH_TRAIN, lables)
 
-r = np.random.randint(0, len(X_train))
-plt.imshow(np.asarray(X_train[r], dtype="uint8"), interpolation="bicubic")
-print("r:", r, "Y:", Y_train[r], "lablel:", inv_lables_train.get(Y_train[r]))
-plt.show()
+    r = np.random.randint(0, len(X_train))
+    plt.imshow(np.asarray(X_train[r], dtype="uint8"), interpolation="bicubic")
+    print("r:", r, "Y:", Y_train[r], "lablel:", inv_lables_train.get(Y_train[r]))
+    plt.show()
