@@ -30,7 +30,6 @@ def load_data_path(path, lables):
             class_idx = len(lables)
             lables.update({class_name: class_idx})
 
-        inv_lables.update({class_idx: class_name})
         wd2 = wd1 + "/" + class_name
         count = 0
         for image_name in os.listdir(wd2):
@@ -41,7 +40,7 @@ def load_data_path(path, lables):
             Y.append(class_idx)
 
         print(class_name, class_idx, count)
-        lables.update({class_idx: class_name})
+        inv_lables.update({class_idx: class_name})
         class_idx += 1
     return X, Y, inv_lables
 
@@ -50,20 +49,26 @@ def load_data_cached(src_path, lables):
     pickle_file = src_path + ".pickle"
     if not os.path.isfile(pickle_file):
         X, Y, inv_lables = load_data_path(src_path, lables)
-        data = [X, Y, inv_lables]
+        data = [X, Y, inv_lables, lables]
         with open(pickle_file, 'wb') as f:
             pickle.dump(data, f)
     else:
         print("load cached data from:", pickle_file)
         with open(pickle_file, 'rb') as f:
             data = pickle.load(f)
-            X, Y, inv_lables = data
+            X, Y, inv_lables, lables_tmp = data
+            lables.update(lables_tmp)
     return X, Y, inv_lables
 
 
 if __name__ == "__main__":
     lables = {}
     X_train, Y_train, inv_lables_train = load_data_cached(DATA_PATH_TRAIN, lables)
+    print("#lables: ", len(inv_lables_train), len(lables))
+    print(inv_lables_train)
+    print(lables)
+    print("X shape:", np.shape(X_train))
+    print("Y shape:", np.shape(Y_train), "example:", Y_train[0])
 
     r = np.random.randint(0, len(X_train))
     plt.imshow(np.asarray(X_train[r], dtype="uint8"), interpolation="bicubic")
