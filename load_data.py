@@ -26,7 +26,7 @@ def load_data_path(path, lables):
     wd1 = path
     for class_name in os.listdir(wd1):
         class_idx = lables.get(class_name)
-        if not class_idx:
+        if class_idx is None:
             class_idx = len(lables)
             lables.update({class_name: class_idx})
 
@@ -41,7 +41,6 @@ def load_data_path(path, lables):
 
         print(class_name, class_idx, count)
         inv_lables.update({class_idx: class_name})
-        class_idx += 1
     return X, Y, inv_lables
 
 
@@ -64,7 +63,9 @@ def load_data_cached(src_path, lables):
 if __name__ == "__main__":
     lables = {}
     X_train, Y_train, inv_lables_train = load_data_cached(DATA_PATH_TRAIN, lables)
+    X_valid, Y_valid, inv_lables_valid = load_data_cached(DATA_PATH_VAL, lables)
     print("#lables: ", len(inv_lables_train), len(lables))
+    print("lables:", lables)
     print(inv_lables_train)
     print(lables)
     print("X shape:", np.shape(X_train))

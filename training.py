@@ -25,7 +25,8 @@ def convertToOneHot(vector, num_classes=None):
     return result
 
 
-print("Y_raw:", np.shape(Y_train_raw), Y_train_raw)
+print("Y_train_raw:", np.shape(Y_train_raw), Y_train_raw)
+print("Y_valid_raw:", np.shape(Y_valid_raw), Y_valid_raw)
 print("lables: ", len(lables))
 
 Y_train = convertToOneHot(Y_train_raw, len(lables))
