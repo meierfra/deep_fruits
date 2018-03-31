@@ -5,6 +5,8 @@ Created on 11 Mar 2018
 '''
 
 import matplotlib.pyplot as plt
+import numpy as np
+import time
 
 
 class live_plot():
@@ -42,3 +44,20 @@ class live_plot():
             self.update_point(data_points[i], plot_idx=i, draw=False)
         if draw:
             self._draw()
+
+    def save(self, filename):
+        self.fig.savefig(filename)
+
+
+if __name__ == "__main__":
+    lp = live_plot(["plot1", "plot2"])
+
+    for i in range(0, 100):
+        dp1 = np.sin(i * 2 * np.pi / 100)
+        dp2 = np.sin(i * 2 * np.pi / 30)
+        lp.update_points([dp1, dp2])
+        if (i + 1) % 25 == 0:
+            lp.save('live_plot_fig_' + str(i + 1) + '.png')
+
+        time.sleep(0.1)
+    # plt.show()

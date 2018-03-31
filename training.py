@@ -143,14 +143,18 @@ def do_train():
         filepath=checkpoint_dir + "weights_epoch_{epoch:03d}-{val_loss:.2f}.hdf5",
         verbose=1,
         save_best_only=False,
-        period=10)
+        period=5)
 
     # ### Training the network
 
     lp = live_plot.live_plot(["loss", "acc", "val_loss", "val_acc"])
 
+    def live_plot_update_and_save(epoch, logs):
+        lp.update_points([logs["loss"], logs["acc"], logs["val_loss"], logs["val_acc"]])
+        lp.save(checkpoint_dir + "loss_acc_plot_epoch{:03d}.png".format(epoch))
+
     live_plot_update_callback = keras.callbacks.LambdaCallback(
-        on_epoch_end=lambda _, logs: lp.update_points([logs["loss"], logs["acc"], logs["val_loss"], logs["val_acc"]])
+        on_epoch_end=live_plot_update_and_save
     )
 
     datagen = ImageDataGenerator(rotation_range=90,
@@ -169,7 +173,7 @@ def do_train():
                         validation_data=(X_valid, Y_valid),
                         # callbacks=[tensorboard, checkpointer]
                         callbacks=[live_plot_update_callback, checkpointer],
-                        #callbacks=[live_plot_update_callback],
+                        # callbacks=[live_plot_update_callback],
                         )
 
     plt.show()
