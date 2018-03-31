@@ -84,36 +84,36 @@ def do_train():
     input_shape = (img_rows, img_cols, img_chan)
     pool_size = (2, 2)
 
-    name = 'cnn_simple_test1'
+    name = 'cnn_large_aug_dout_bn_test2'
     model = Sequential()
 
     model.add(Convolution2D(64, kernel_size, padding='valid', input_shape=input_shape))
-#     model.add(BatchNormalization())
+    model.add(BatchNormalization())
     model.add(Activation('relu'))
-#     model.add(Convolution2D(64, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
+    model.add(Convolution2D(64, kernel_size, padding='valid'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Convolution2D(64, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
+    model.add(BatchNormalization())
     model.add(Activation('relu'))
-#     model.add(Convolution2D(64, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
+    model.add(Convolution2D(64, kernel_size, padding='valid'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Convolution2D(128, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
+    model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Flatten())
 
     model.add(Dense(128))
-#     model.add(BatchNormalization())
+    model.add(BatchNormalization())
     model.add(Activation('relu'))
-#     model.add(Dropout(0.5))
+    model.add(Dropout(0.5))
 
 #     model.add(Dense(128))
 #     model.add(BatchNormalization())
@@ -124,7 +124,7 @@ def do_train():
     model.add(Activation('softmax'))
 
     # adam = keras.optimizers.adam()
-    adam = keras.optimizers.adam(lr=0.001, decay=0.0)
+    adam = keras.optimizers.adam(lr=0.001, decay=0.001)
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])
@@ -166,15 +166,15 @@ def do_train():
 
     train_gen = datagen.flow(X_train, Y_train, batch_size=batch_size, shuffle=True)
 
-    # model.fit_generator(train_gen,
-    model.fit(X_train, Y_train, batch_size=batch_size,
-              epochs=nb_epoch,
-              verbose=2,
-              validation_data=(X_valid, Y_valid),
-              # callbacks=[tensorboard, checkpointer]
-              callbacks=[live_plot_update_callback, checkpointer],
-              # callbacks=[live_plot_update_callback],
-              )
+    # model.fit(X_train, Y_train, batch_size=batch_size,
+    model.fit_generator(train_gen,
+                        epochs=nb_epoch,
+                        verbose=2,
+                        validation_data=(X_valid, Y_valid),
+                        # callbacks=[tensorboard, checkpointer]
+                        callbacks=[live_plot_update_callback, checkpointer],
+                        # callbacks=[live_plot_update_callback],
+                        )
 
     plt.show()
 
