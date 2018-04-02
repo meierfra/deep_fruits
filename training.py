@@ -84,63 +84,63 @@ def do_train():
     input_shape = (img_rows, img_cols, img_chan)
     pool_size = (2, 2)
 
-    name = 'cnn_large_aug_dout_bn_test2'
+    name = 'cnn_simple_test2'
     model = Sequential()
 
-    model.add(Convolution2D(64, kernel_size, padding='valid', input_shape=input_shape))
+    model.add(Convolution2D(32, kernel_size, padding='valid', input_shape=input_shape))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Convolution2D(64, kernel_size, padding='valid'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
+#     model.add(Convolution2D(64, kernel_size, padding='valid'))
+#     model.add(BatchNormalization())
+#     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
-
-    model.add(Convolution2D(64, kernel_size, padding='valid'))
+#
+    model.add(Convolution2D(32, kernel_size, padding='valid'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-    model.add(Convolution2D(64, kernel_size, padding='valid'))
-    model.add(BatchNormalization())
-    model.add(Activation('relu'))
+#     model.add(Convolution2D(64, kernel_size, padding='valid'))
+#     model.add(BatchNormalization())
+#     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
-
-    model.add(Convolution2D(128, kernel_size, padding='valid'))
+#
+    model.add(Convolution2D(32, kernel_size, padding='valid'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Flatten())
 
-    model.add(Dense(128))
+    model.add(Dense(64))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-#     model.add(Dense(128))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-#     model.add(Dropout(0.5))
+    model.add(Dense(64))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Dropout(0.5))
 
     model.add(Dense(nb_classes))
     model.add(Activation('softmax'))
 
     # adam = keras.optimizers.adam()
-    adam = keras.optimizers.adam(lr=0.001, decay=0.001)
+    adam = keras.optimizers.adam(lr=0.001, decay=0.000)
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])
 
     model.summary()
-#    exit(0)
+    checkpoint_dir = "Checkpoints/model_" + name + "/"
+    print("checkpoint_dir:", checkpoint_dir)
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    keras.utils.plot_model(model, show_shapes=True, to_file=checkpoint_dir + 'model.png')
 
 #     model.evaluate(X_train, Y_train)
 #     exit(0)
 
-    # save model after every 10 epochs in "Checkpoints/8_facesl/model_1_fc/"-folder
-    checkpoint_dir = "Checkpoints/model_" + name + "/"
-    print("checkpoint_dir:", checkpoint_dir)
-    os.makedirs(checkpoint_dir, exist_ok=True)
+    # save model after every 5 epochs in "Checkpoints/8_facesl/model_1_fc/"-folder
     checkpointer = keras.callbacks.ModelCheckpoint(
-        filepath=checkpoint_dir + "weights_epoch_{epoch:03d}-{val_loss:.2f}.hdf5",
+        filepath=checkpoint_dir + "weights_epoch_{epoch:03d}-{val_loss:.3f}.hdf5",
         verbose=1,
         save_best_only=False,
         period=5)
@@ -157,24 +157,24 @@ def do_train():
         on_epoch_end=live_plot_update_and_save
     )
 
-    datagen = ImageDataGenerator(rotation_range=90,
-                                 width_shift_range=0.1,
-                                 height_shift_range=0.1,
-                                 horizontal_flip=True,
-                                 vertical_flip=True,
-                                 zoom_range=0.1)
+#     datagen = ImageDataGenerator(rotation_range=90,
+#                                  width_shift_range=0.1,
+#                                  height_shift_range=0.1,
+#                                  horizontal_flip=True,
+#                                  vertical_flip=True,
+#                                  zoom_range=0.1)
+#
+#     train_gen = datagen.flow(X_train, Y_train, batch_size=batch_size, shuffle=True)
 
-    train_gen = datagen.flow(X_train, Y_train, batch_size=batch_size, shuffle=True)
-
-    # model.fit(X_train, Y_train, batch_size=batch_size,
-    model.fit_generator(train_gen,
-                        epochs=nb_epoch,
-                        verbose=2,
-                        validation_data=(X_valid, Y_valid),
-                        # callbacks=[tensorboard, checkpointer]
-                        callbacks=[live_plot_update_callback, checkpointer],
-                        # callbacks=[live_plot_update_callback],
-                        )
+    # model.fit_generator(train_gen,
+    model.fit(X_train, Y_train, batch_size=batch_size,
+              epochs=nb_epoch,
+              verbose=2,
+              validation_data=(X_valid, Y_valid),
+              # callbacks=[tensorboard, checkpointer]
+              callbacks=[live_plot_update_callback, checkpointer],
+              # callbacks=[live_plot_update_callback],
+              )
 
     plt.show()
 
