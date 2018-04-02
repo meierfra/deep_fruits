@@ -3,6 +3,7 @@ import numpy as np
 import load_data
 import os
 
+# import tensorflow as tf
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
@@ -12,6 +13,12 @@ from keras.preprocessing.image import ImageDataGenerator
 
 import live_plot
 import matplotlib.pyplot as plt
+
+
+# tf_config = tf.ConfigProto()
+# tf_config.log_device_placement = True
+# tf_config.gpu_options.allow_growth = True
+# keras.backend.tensorflow_backend.set_session(tf.Session(config=tf_config))
 
 
 def convertToOneHot(vector, num_classes=None):
@@ -75,7 +82,7 @@ def prepare_data():
 
 def do_train():
 
-    batch_size = 128
+    batch_size = 64
     nb_classes = len(lables)
     nb_epoch = 150
     img_rows, img_cols = 100, 100
@@ -84,7 +91,7 @@ def do_train():
     input_shape = (img_rows, img_cols, img_chan)
     pool_size = (2, 2)
 
-    name = 'cnn_large_bn_dout_test2'
+    name = 'cnn_large_aug_bn_dout_test3'
     model = Sequential()
 
     model.add(Convolution2D(64, kernel_size, padding='valid', input_shape=input_shape))
@@ -157,24 +164,26 @@ def do_train():
         on_epoch_end=live_plot_update_and_save
     )
 
-#     datagen = ImageDataGenerator(rotation_range=90,
-#                                  width_shift_range=0.1,
-#                                  height_shift_range=0.1,
-#                                  horizontal_flip=True,
-#                                  vertical_flip=True,
-#                                  zoom_range=0.1)
-#
-#     train_gen = datagen.flow(X_train, Y_train, batch_size=batch_size, shuffle=True)
+    # datagen = ImageDataGenerator()
+    datagen = ImageDataGenerator(rotation_range=90.0,
+                                 width_shift_range=0.2,
+                                 height_shift_range=0.2,
+                                 horizontal_flip=True,
+                                 vertical_flip=True,
+                                 zoom_range=[0.6, 1.1],
+                                 channel_shift_range=0.2)
 
-    # model.fit_generator(train_gen,
-    model.fit(X_train, Y_train, batch_size=batch_size,
-              epochs=nb_epoch,
-              verbose=2,
-              validation_data=(X_valid, Y_valid),
-              # callbacks=[tensorboard, checkpointer]
-              callbacks=[live_plot_update_callback, checkpointer],
-              # callbacks=[live_plot_update_callback],
-              )
+    train_gen = datagen.flow(x=X_train, y=Y_train, batch_size=batch_size)
+
+    # model.fit(X_train, Y_train, batch_size=batch_size,
+    model.fit_generator(train_gen,
+                        epochs=nb_epoch,
+                        verbose=2,
+                        validation_data=(X_valid, Y_valid),
+                        # callbacks=[tensorboard, checkpointer]
+                        callbacks=[live_plot_update_callback, checkpointer],
+                        # callbacks=[live_plot_update_callback],
+                        )
 
     plt.show()
 

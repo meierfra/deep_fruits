@@ -49,7 +49,8 @@ imgs = (imgs_raw - X_mean) / (X_std + 0.0001)
 
 #model = keras.models.load_model('./Checkpoints/model_cnn_large_aug_dout_bn_test1/weights_epoch_010-0.02.hdf5')
 #model = keras.models.load_model('./Checkpoints/model_cnn_simple_test2/weights_epoch_025-0.03.hdf5')
-model = keras.models.load_model('./Checkpoints/model_cnn_large_bn_dout_test2/weights_epoch_020-0.012.hdf5')
+#model = keras.models.load_model('./Checkpoints/model_cnn_large_bn_dout_test2/weights_epoch_020-0.012.hdf5')
+model = keras.models.load_model('./Checkpoints/model_cnn_large_aug_bn_dout_test3/weights_epoch_085-0.053.hdf5')
 
 preds = model.predict(imgs)
 
