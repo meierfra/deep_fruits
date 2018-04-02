@@ -50,26 +50,26 @@ def prepare_data():
 #     print("Yr example:", Y_train_raw[0])
 
     # #### Normalization of the training and validationset.
-    X_mean = np.mean(X_train_raw, axis=0)
-    X_std = np.std(X_train_raw, axis=0)
+    # X_mean = np.mean(X_train_raw, axis=0)
+    # X_std = np.std(X_train_raw, axis=0)
 
     # normalize data through pixel axis
-    X_train = (X_train_raw - X_mean) / (X_std + 0.0001)
-    X_valid = (X_valid_raw - X_mean) / (X_std + 0.0001)
+    # X_train = (X_train_raw - X_mean) / (X_std + 0.0001)
+    # X_valid = (X_valid_raw - X_mean) / (X_std + 0.0001)
 
     # normalize each (channel of each) picture
-#     x_mean = np.ndarray(3)
-#     x_std = np.ndarray(3)
-#     for i in range(3):
-#         x_mean[i] = np.mean(X_train[:, :, :, i])
-#         x_std[i] = np.std(X_train[:, :, :, i]) + 0.0001
-#     print(x_mean, x_std)
-#
-#     X_train = X_train - np.full((48, 48, 3), x_mean)
-#     X_train = X_train / np.full((48, 48, 3), x_std)
-#
-#     X_valid = X_valid - np.full((48, 48, 3), x_mean)
-#     X_valid = X_valid / np.full((48, 48, 3), x_std)
+    img_rows, img_cols = 100, 100
+    img_chan = 3
+    input_shape = (img_rows, img_cols, img_chan)
+    x_mean = np.ndarray(img_chan)
+    x_std = np.ndarray(img_chan)
+    for i in range(img_chan):
+        x_mean[i] = np.mean(np.array(X_train_raw)[:, :, :, i])
+        x_std[i] = np.std(np.array(X_train_raw)[:, :, :, i]) + 0.0001
+    print(x_mean, x_std)
+
+    X_train = (X_train_raw - np.full(input_shape, x_mean)) / np.full(input_shape, x_std)
+    X_valid = (X_valid_raw - np.full(input_shape, x_mean)) / np.full(input_shape, x_std)
 
     Y_train = convertToOneHot(Y_train_raw, len(lables))
     Y_valid = convertToOneHot(Y_valid_raw, len(lables))
@@ -91,7 +91,7 @@ def do_train():
     input_shape = (img_rows, img_cols, img_chan)
     pool_size = (2, 2)
 
-    name = 'cnn_large_aug_bn_dout_test3'
+    name = 'cnn_large_aug_bn_dout_test4'
     model = Sequential()
 
     model.add(Convolution2D(64, kernel_size, padding='valid', input_shape=input_shape))
@@ -131,7 +131,7 @@ def do_train():
     model.add(Activation('softmax'))
 
     # adam = keras.optimizers.adam()
-    adam = keras.optimizers.adam(lr=0.001, decay=0.001)
+    adam = keras.optimizers.adam(lr=0.001, decay=0.000)
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])
