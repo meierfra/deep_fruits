@@ -84,38 +84,38 @@ def do_train():
     input_shape = (img_rows, img_cols, img_chan)
     pool_size = (2, 2)
 
-    name = 'cnn_simple_test2'
+    name = 'cnn_large_bn_dout_test2'
     model = Sequential()
 
-    model.add(Convolution2D(32, kernel_size, padding='valid', input_shape=input_shape))
+    model.add(Convolution2D(64, kernel_size, padding='valid', input_shape=input_shape))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-#     model.add(Convolution2D(64, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
-#
-    model.add(Convolution2D(32, kernel_size, padding='valid'))
+    model.add(Convolution2D(64, kernel_size, padding='valid'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
-#     model.add(Convolution2D(64, kernel_size, padding='valid'))
-#     model.add(BatchNormalization())
-#     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
-#
-    model.add(Convolution2D(32, kernel_size, padding='valid'))
+
+    model.add(Convolution2D(64, kernel_size, padding='valid'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(Convolution2D(64, kernel_size, padding='valid'))
+    model.add(BatchNormalization())
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=pool_size))
+
+    model.add(Convolution2D(128, kernel_size, padding='valid'))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
 
     model.add(Flatten())
 
-    model.add(Dense(64))
+    model.add(Dense(128))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
 
-    model.add(Dense(64))
+    model.add(Dense(128))
     model.add(BatchNormalization())
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
@@ -124,7 +124,7 @@ def do_train():
     model.add(Activation('softmax'))
 
     # adam = keras.optimizers.adam()
-    adam = keras.optimizers.adam(lr=0.001, decay=0.000)
+    adam = keras.optimizers.adam(lr=0.001, decay=0.001)
     model.compile(loss='categorical_crossentropy',
                   optimizer=adam,
                   metrics=['accuracy'])

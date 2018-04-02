@@ -17,7 +17,7 @@ def plot_pics(imgs):
         plt.axis('off')
         # plt.tight_layout()
         plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
-    plt.show()
+    #plt.show()
 
 
 
@@ -48,7 +48,8 @@ plot_pics(imgs_raw)
 imgs = (imgs_raw - X_mean) / (X_std + 0.0001)
 
 #model = keras.models.load_model('./Checkpoints/model_cnn_large_aug_dout_bn_test1/weights_epoch_010-0.02.hdf5')
-model = keras.models.load_model('./Checkpoints/model_cnn_simple_test2/weights_epoch_025-0.03.hdf5')
+#model = keras.models.load_model('./Checkpoints/model_cnn_simple_test2/weights_epoch_025-0.03.hdf5')
+model = keras.models.load_model('./Checkpoints/model_cnn_large_bn_dout_test2/weights_epoch_020-0.012.hdf5')
 
 preds = model.predict(imgs)
 
