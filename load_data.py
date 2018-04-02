@@ -1,4 +1,4 @@
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -8,11 +8,14 @@ import pickle
 DATA_PATH_BASE = "./data/fruits-360"
 DATA_PATH_TRAIN = DATA_PATH_BASE + "/Training"
 DATA_PATH_VAL = DATA_PATH_BASE + "/Validation"
+DATA_PATH_MULTI = DATA_PATH_BASE + "/test-multiple_fruits"
 
 
-def load_image(image_path):
+def load_image(image_path, rescale_dim=None):
     with Image.open(image_path) as img:
         img.load()
+        if (rescale_dim):
+            img = ImageOps.fit(img, rescale_dim)
         data = np.asarray(img, dtype="uint8")
         return data
 
